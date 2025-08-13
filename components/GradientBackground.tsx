@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, ViewStyle, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text, ViewStyle, SafeAreaView, ScrollView, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import BackButton from "./BackButton";
 
@@ -8,10 +8,11 @@ type GradientBackgroundProps = {
   style?: ViewStyle;
   showLogo?: boolean;
   showBackButton?: boolean;
+  showBackplate?: boolean;
   onPress?: () => void;
 };
 
-export default function GradientBackground({ children, style, showLogo = false, showBackButton = false }: GradientBackgroundProps) {
+export default function GradientBackground({ children, style, showLogo = false, showBackButton = false, showBackplate = false }: GradientBackgroundProps) {
   return (
       <LinearGradient
         colors={["#2a6cf6", "#e24fa3"]}
@@ -32,7 +33,12 @@ export default function GradientBackground({ children, style, showLogo = false, 
           <View style={styles.matExtension} />
           </>
         )}
-        {children}
+        {showBackplate && (
+          <View style={styles.backplate}>
+          {children}
+          </View>
+        )}
+        {!showBackplate && children }
       </LinearGradient>
   );
 }
@@ -40,6 +46,8 @@ export default function GradientBackground({ children, style, showLogo = false, 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 17,
+    // zIndex: -10,
   },
   logoContainer: {
     alignItems: "center",
@@ -49,10 +57,13 @@ const styles = StyleSheet.create({
   bar: {
     width: 20,
     height: 5,
-    backgroundColor: "#fff",
-    marginBottom: -10,
     marginLeft: 3,
     alignSelf: "flex-start",
+    backgroundColor: "#fff",
+    marginBottom: Platform.select({
+      ios: -5,
+      android: -10,
+    }),
   },
   logo: {
     color: "#fff",
@@ -74,5 +85,9 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     marginTop: '70%',
+  },
+  backplate: {
+    backgroundColor: 'white',
+    borderRadius: 20,
   }
 });

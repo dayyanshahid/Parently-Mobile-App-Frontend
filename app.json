@@ -2,6 +2,12 @@
   "expo": {
     "name": "parently",
     "slug": "parently",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "android": {
+      "package": "com.anonymous.parently"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.parently"
+    }
   }
 }

@@ -32,7 +32,7 @@ export default function PasswordResetScreen() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push("/changepassword");
+      router.push("/verificationscreen");
     }, 1800);
   };
 

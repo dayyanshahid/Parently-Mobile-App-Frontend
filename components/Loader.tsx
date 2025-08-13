@@ -38,7 +38,7 @@ export default function Loader({ loading }: LoaderProps) {
   return (
     <View style={styles.overlay}>
       {/* Blur + dim background */}
-      <BlurView intensity={100} style={StyleSheet.absoluteFill} tint="light" experimentalBlurMethod="dimezisBlurView" />
+      <BlurView intensity={100} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" blurReductionFactor={250}/>
       <View style={styles.dimOverlay} />
 
       <Animated.View
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   dimOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: "rgba(0, 0, 0, 0)",
   },
   spinner: {
     width: 80,

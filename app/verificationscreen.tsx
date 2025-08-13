@@ -30,7 +30,7 @@ export default function VerificationScreen() {
           </View>
           <StyledButton title="Verify" onPress={() => {
             Keyboard.dismiss();
-            router.push("/passwordreset");
+            router.push("/homescreen");
           }} style={styles.verifyBtn}>
             <Feather name="arrow-right" size={22} color="#fff" style={{ marginLeft: 8 }} />
           </StyledButton>
