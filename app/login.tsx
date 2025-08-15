@@ -34,7 +34,10 @@ export default function LoginScreen() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push("/verificationscreen");
+      router.push({
+        pathname: "/verificationscreen",
+        params: { fromSignIn: "true" }
+      });
     }, 1800);
   }; 
 

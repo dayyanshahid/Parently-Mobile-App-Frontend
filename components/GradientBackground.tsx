@@ -57,13 +57,18 @@ const styles = StyleSheet.create({
   bar: {
     width: 20,
     height: 5,
-    marginLeft: 3,
+    marginLeft:
+      Platform.select({
+        ios: 2,
+        android: 3,
+      }),
     alignSelf: "flex-start",
     backgroundColor: "#fff",
-    marginBottom: Platform.select({
-      ios: -5,
-      android: -10,
-    }),
+    marginBottom: 
+      Platform.select({
+        ios: -7,
+        android: -10,
+      }),
   },
   logo: {
     color: "#fff",

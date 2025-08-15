@@ -3,6 +3,7 @@
     "name": "parently",
     "slug": "parently",
     "version": "1.0.0",
+    "jsEngine": "jsc",
     "android": {
       "package": "com.anonymous.parently"
     },

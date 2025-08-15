@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, PixelRatio } from "react-native";
+import { View, Text, StyleSheet, Dimensions, PixelRatio, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
 
@@ -15,9 +15,15 @@ export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
+    const timeoutDuration = Platform.select({
+      ios: 3000,
+      android: 3000,
+    });
+
     const timer = setTimeout(() => {
       router.replace("/login");
-    }, 3000);
+    }, timeoutDuration);
+
     return () => clearTimeout(timer);
   }, [router]);
 
@@ -52,8 +58,16 @@ const styles = StyleSheet.create({
     width: scale(27),
     height: verticalScale(7),
     backgroundColor: "#fff",
-    marginBottom: -verticalScale(16),
-    marginLeft: scale(4),
+    marginBottom: 
+      Platform.select({
+        ios: -verticalScale(10),       // iOS field value
+        android: -verticalScale(14),   // Android field value
+      }),
+    marginLeft: 
+      Platform.select({
+        ios: scale(3),       // iOS field value
+        android: scale(4),   // Android field value
+      }),
     alignSelf: "flex-start",
   },
   logo: {
@@ -64,9 +78,17 @@ const styles = StyleSheet.create({
   tagline: {
     color: "#fff",
     fontSize: moderateScale(16),
-    letterSpacing: scale(3),
+    letterSpacing:
+      Platform.select({
+        ios: scale(2),       // iOS field value
+        android: scale(3),   // Android field value
+      }),
     textAlign: "center",
-    marginTop: -verticalScale(20),
+    marginTop: 
+      Platform.select({
+        ios: -verticalScale(15),       // iOS field value
+        android: -verticalScale(20),   // Android field value
+      }),
   },
   powered: {
     position: "absolute",

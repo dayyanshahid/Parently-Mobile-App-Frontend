@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Animated, StyleSheet, Dimensions } from "react-native";
+import { View, Animated, StyleSheet, Dimensions, Platform } from "react-native";
 import { BlurView } from "expo-blur";
 
 const DOTS = 12;
@@ -38,9 +38,9 @@ export default function Loader({ loading }: LoaderProps) {
   return (
     <View style={styles.overlay}>
       {/* Blur + dim background */}
-      <BlurView intensity={100} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" blurReductionFactor={250}/>
+      {/* <BlurView intensity={100} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" blurReductionFactor={250}/>*/}
+      <BlurView {...(Platform.OS === 'android' ? { experimentalBlurMethod: 'dimezisBlurView' } : {})} tint="dark" intensity={15} style={StyleSheet.absoluteFill} /> 
       <View style={styles.dimOverlay} />
-
       <Animated.View
         style={[
           styles.spinner,

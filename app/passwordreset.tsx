@@ -32,7 +32,10 @@ export default function PasswordResetScreen() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push("/verificationscreen");
+      router.push({
+        pathname: "/verificationscreen",
+        params: { fromForgotPassword: "true" }
+      });
     }, 1800);
   };
 
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   input: {
-    marginBottom: 32,
+    // marginBottom: 32,
   },
   verifyBtn: {
     backgroundColor: "#c93c7c",

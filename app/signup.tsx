@@ -40,7 +40,10 @@ export default function SignupScreen() {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      router.push("/verificationscreen");
+      router.push({
+        pathname: "/verificationscreen",
+        params: { fromCreateAccount: "true" }
+      });
     }, 1800);
   };
 

@@ -68,10 +68,12 @@ const styles = StyleSheet.create({
   },
   navContainer: {
     flexDirection: "row",
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 27,
     paddingHorizontal: 20,
     justifyContent: "space-around",
     alignItems: "center",
+    // backgroundColor: 'black',
   },
   navItem: {
     alignItems: "center",

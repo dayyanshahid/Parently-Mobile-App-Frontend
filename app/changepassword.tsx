@@ -33,7 +33,7 @@ export default function ChangePassword() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push("homescreen");
+      router.push("login");
     }, 1800);
   };
 

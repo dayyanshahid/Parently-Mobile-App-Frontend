@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const HEADER_ICONS = [
-  { name: "search", key: "search" },
+  { name: "search", key: "search", hasDot: false },
   { name: "bell", key: "bell", hasDot: true },
-  { name: "plus", key: "plus" },
+  { name: "plus", key: "plus", hasDot: false },
 ];
 
 interface HeaderSectionProps {
@@ -13,16 +14,29 @@ interface HeaderSectionProps {
 }
 
 export default function HeaderSection({ title = "PARENTLY" }: HeaderSectionProps) {
-  const renderHeaderIcon = ({ name, hasDot, key }: any) => (
-    <TouchableOpacity key={key} style={styles.iconButton}>
-      <Feather name={name} size={20} color="#fff" />
-      {hasDot && <View style={styles.redDot} />}
-    </TouchableOpacity>
-  );
+  const router = useRouter();
+
+  const renderHeaderIcon = ({ name, hasDot, key }: any) => {
+    const handlePress = () => {
+      if (key === "plus") {
+        router.push("/createEvent");
+      }
+    };
+
+    return (
+      <TouchableOpacity key={key} style={styles.iconButton} onPress={handlePress}>
+        <Feather name={name} size={17} color="black" />
+        {hasDot && <View style={styles.redDot} />}
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.header}>
-      <Text style={styles.logoText}>{title}</Text>
+      <View style={styles.logoContainer}>
+        <View style={styles.bar} />
+        <Text style={styles.logoText}>{title}</Text>
+      </View>
       <View style={styles.headerIconsContainer}>
         {HEADER_ICONS.map(renderHeaderIcon)}
       </View>
@@ -35,8 +49,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical:20,
+    marginVertical: 20,
     paddingHorizontal: 10,
+  },
+  logoContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    position: "relative",
+  },
+  bar: {
+    width: 13, // smaller than splash
+    height: 3,
+    backgroundColor: "#fff",
+    marginBottom: Platform.select({
+      ios: -3,
+      android: -5,
+    }),
+    marginLeft: Platform.select({
+      ios: 1.25,
+      android: 2,
+    }),
   },
   logoText: {
     color: "#fff",
@@ -45,10 +77,10 @@ const styles = StyleSheet.create({
   },
   headerIconsContainer: {
     flexDirection: "row",
-    gap: 12,
+    // backgroundColor: 'red'
   },
   iconButton: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "white",
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -60,7 +92,7 @@ const styles = StyleSheet.create({
   redDot: {
     position: "absolute",
     top: 6,
-    right: 6,
+    right: 10,
     width: 8,
     height: 8,
     borderRadius: 4,

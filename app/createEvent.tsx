@@ -11,6 +11,7 @@ import { Feather } from "@expo/vector-icons";
 import GradientBackground from "../components/GradientBackground";
 import HeaderSection from "../components/HeaderSection";
 import StyledButton from "../components/StyledButton";
+import EventMat from "../components/EventMat";
 
 interface EventData {
   title: string;
@@ -39,17 +40,10 @@ export default function CreateEvent({ navigation }: any) {
   };
 
   return (
-    <GradientBackground>
+    <EventMat title="Create New Event" subtitle="Plan your event in a few simple steps">
       <ScrollView style={styles.container}>
-        <HeaderSection title="Create New Event" />
-        <Text style={styles.subtitle}>Plan your event in a few simple steps</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#fff" />
-        </TouchableOpacity>
-        
         <View style={styles.formContainer}>
           <Text style={styles.sectionTitle}>Basic Info</Text>
-          
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Event Title</Text>
             <TextInput
@@ -99,11 +93,11 @@ export default function CreateEvent({ navigation }: any) {
           <StyledButton title="Next" onPress={handleSaveEvent} />
         </View>
       </ScrollView>
-    </GradientBackground>
+    </EventMat>
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
@@ -113,14 +107,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: "#fff",
+    color: "black",
     marginBottom: 20,
     textAlign: "center",
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "black",
     marginBottom: 20,
   },
   inputGroup: {
@@ -128,14 +122,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: "#fff",
+    color: "black",
     marginBottom: 8,
   },
   input: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
     padding: 15,
-    color: "#fff",
+    color: "black",
     fontSize: 16,
   },
   textArea: {

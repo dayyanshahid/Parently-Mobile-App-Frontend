@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Keyboard, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Keyboard, ScrollView, Platform } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledButton from "../components/StyledButton";
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import VerificationCodeInput from "../components/VerificationCodeInput";
 
 export default function VerificationScreen() {
   const router = useRouter();
+  const { fromSignIn, fromForgotPassword, fromCreateAccount } = useLocalSearchParams();
   const [code, setCode] = useState("");
   const email = "abc123@gmail.com";
 
@@ -30,7 +31,13 @@ export default function VerificationScreen() {
           </View>
           <StyledButton title="Verify" onPress={() => {
             Keyboard.dismiss();
-            router.push("/homescreen");
+            if (fromSignIn === "true") {
+              router.push("/homescreen");
+            } if (fromForgotPassword === "true") {
+              router.push("/changepassword");
+            }if (fromCreateAccount === "true") {
+              router.push("/login");
+            }
           }} style={styles.verifyBtn}>
             <Feather name="arrow-right" size={22} color="#fff" style={{ marginLeft: 8 }} />
           </StyledButton>
@@ -87,6 +94,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 32,
     marginTop: 8,
+    paddingHorizontal:
+      Platform.select({
+        ios: 16,
+        android: 24
+      }),
   },
   codeInput: {
     borderRadius: 16,
