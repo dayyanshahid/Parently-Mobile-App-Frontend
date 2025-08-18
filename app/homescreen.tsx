@@ -9,10 +9,12 @@ import MyTasksSection from "../components/MyTasksSection";
 import RemindersSection from "../components/ReminderSection";
 import BottomNavigation from "../components/BottomNavigation";
 import SlidingPopup from "../components/SlidingPopup";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 
 export default function HomeScreen() {
   const [isPopupVisible, setPopupVisible] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("option1");
+  const [selectedOption, setSelectedOption] = useState("all");
 
   const { height } = Dimensions.get("window");
 
@@ -24,25 +26,47 @@ export default function HomeScreen() {
     setPopupVisible(false);
   };
 
+  const kids = ["Harry Looker", "Georgia Looker", "changes height dynamically with more kids"];
+  const totalOptions = kids.length + 1;
+  const optionHeight = 55;
+  const dynamicPopupHeight = Math.min(height * 0.8, totalOptions * optionHeight + 100);
+
+
   const RadioButton = ({ label, value, selected, onSelect }) => (
-    <TouchableOpacity style={styles.radioButtonContainer} onPress={() => onSelect(value)}>
-      <View style={[styles.radioButton, selected && styles.radioButtonSelected]}>
-        {selected && <View style={styles.radioButtonInner} />}
-      </View>
-      <Text style={styles.radioButtonLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
+  <TouchableOpacity activeOpacity={3} style={styles.radioButtonContainer} onPress={() => onSelect(value)}>
+    <Text style={styles.radioButtonLabel}>{label}</Text>
+    <View style={[styles.circle, selected ? styles.circleSelected : styles.circleUnselected]}>
+      <Icon name="check-bold" size={18} color="#fff" /> 
+    </View>
+  </TouchableOpacity>
+);
 
   const PopupContent = () => (
-    <View style={styles.popupContent}>
-      <Text style={styles.popupTitle}>Select Your Preference:</Text>
+  <ScrollView contentContainerStyle={styles.popupContent} showsVerticalScrollIndicator={false}>  
+  <View style={styles.popupContent}>
+    <Text style={styles.popupTitle}>Filter by</Text>
 
-      <RadioButton label="Show All Events" value="option1" selected={selectedOption === "option1"} onSelect={setSelectedOption} />
-      <RadioButton label="Show Only Today's Events" value="option2" selected={selectedOption === "option2"} onSelect={setSelectedOption} />
-      <RadioButton label="Show Upcoming Events" value="option3" selected={selectedOption === "option3"} onSelect={setSelectedOption} />
-      <RadioButton label="Show Past Events" value="option4" selected={selectedOption === "option4"} onSelect={setSelectedOption} />
-    </View>
-  );
+    {/* All Members option */}
+    <RadioButton
+      label="All Members"
+      value="all"
+      selected={selectedOption === "all"}
+      onSelect={setSelectedOption}
+    />
+
+    {/* Kids dynamic list */}
+    {kids.map((kid, index) => (
+      <RadioButton
+        key={index}
+        label={kid}
+        value={kid}
+        selected={selectedOption === kid}
+        onSelect={setSelectedOption}
+      />
+    ))}
+  </View>
+  </ScrollView>
+);
 
   return (
     <GradientBackground style={styles.container}>
@@ -51,9 +75,12 @@ export default function HomeScreen() {
         <InfoCardsSection onFilterPress={handleFilterPress} />
       </View>
       <View style={styles.body}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <CalendarStrip />
-          <TodayEventsSection />
+        {/* <View style={styles.staticcontent}>
+        <CalendarStrip />
+        </View> */}
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <CalendarStrip/>
+          <TodayEventsSection onAddEvent={() => alert("Add pressed")} onSeeAll={() => alert("See all pressed")}/>
           <MyTasksSection />
           <RemindersSection />
         </ScrollView>
@@ -63,7 +90,8 @@ export default function HomeScreen() {
         visible={isPopupVisible}
         onClose={closePopup}
         customView={<PopupContent />}
-        popupHeight={height * 0.3} // height of popup
+        // popupHeight={height * 0.35}
+        popupHeight={dynamicPopupHeight}
       />
     </GradientBackground>
   );
@@ -78,6 +106,13 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     backgroundColor: "white",
   },
+  // staticcontent: {
+  // width: "96%",
+  // paddingTop: 10,
+  // alignContent: "center",
+  // alignSelf: "center",
+  // borderRadius: 36,
+  // },
   scrollContent: {
     paddingTop: "4%",
     paddingBottom: "30%",
@@ -102,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     paddingVertical: 5,
+    justifyContent: "space-between",
   },
   radioButton: {
     width: 20,
@@ -112,6 +148,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     justifyContent: "center",
     alignItems: "center",
+
   },
   radioButtonSelected: {
     backgroundColor: "#f200ffff",
@@ -124,6 +161,22 @@ const styles = StyleSheet.create({
   },
   radioButtonLabel: {
     fontSize: 16,
-    color: "#333",
+    color: "#333333dd",
+    fontWeight: "600",
   },
+
+  circle: {
+  width: 24,
+  height: 24,
+  borderRadius: 12,
+  justifyContent: "center",
+  alignItems: "center",
+},
+circleUnselected: {
+  backgroundColor: "grey",
+},
+circleSelected: {
+  backgroundColor: "#ff00aa", // pink
+},
+
 });

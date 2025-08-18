@@ -174,19 +174,23 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    // backgroundColor: 'red',
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 56,
     paddingBottom: 20,
   },
   headerTitle: {
+    marginLeft: 40,
+    // backgroundColor: 'red',
     fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
   },
   placeholder: {
     width: 40,
+    // backgroundColor: 'red'
   },
   content: {
     flex: 1,

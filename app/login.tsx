@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet,Image, TouchableOpacity } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledTextInput from "../components/StyledTextInput";
 import StyledButton from "../components/StyledButton";
@@ -8,12 +8,12 @@ import { MaterialCommunityIcons, FontAwesome, Feather } from "@expo/vector-icons
 import { useRouter } from "expo-router";
 import Loader from "../components/Loader";
 
+
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Loader state
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<number | null>(null);
@@ -51,7 +51,7 @@ export default function LoginScreen() {
 
   return (
     <GradientBackground showLogo>
-      <Loader loading={showLoader} />
+      {/* <Loader loading={showLoader} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.title}>Sign in</Text>
@@ -68,8 +68,12 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             leftIcon={<Feather name="lock" size={22} color="#888" />}
-            rightIcon={<Feather name="eye" size={22} color="#888" />}
-            secureTextEntry
+            rightIcon={
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Feather name={showPassword ? "eye-off" : "eye"} size={22} color="#888" />
+              </TouchableOpacity>
+            }
+            secureTextEntry={!showPassword}
           />
           <TouchableOpacity style={styles.forgotBtn} onPress={handleForgotpassword}>
             <Text style={styles.forgotText}>Forgot Password?</Text>
@@ -79,15 +83,15 @@ export default function LoginScreen() {
           </StyledButton>
           <Text style={styles.or}>OR</Text>
           <SocialButton
-            title="Login with Google"
-            icon={<FontAwesome name="google" size={24} color="#EA4335" />}
-            onPress={() => {}}
-          />
+              title="Login with Google"
+              icon={<Image source={require("../assets/Google.png")} style={{ width: 22, height: 22 }} />}
+              onPress={() => {}}
+            />
           <SocialButton
-            title="Login with Outlook"
-            icon={<MaterialCommunityIcons name="microsoft-outlook" size={24} color="#0072C6" />}
-            onPress={() => {}}
-          />
+              title="Login with Outlook"
+              icon={<Image source={require("../assets/Outlook.png")} style={{ width: 22, height: 22 }} />}
+              onPress={() => {}}
+            />
           <View style={styles.signupRow}>
             <Text style={styles.signupText}>Don’t have an account? </Text>
             <TouchableOpacity onPress={() => router.push("/signup")}>
@@ -98,9 +102,9 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.contactBtn}>
           <Text style={styles.contactText}>Contact Us</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.contactBtn} onPress={() => router.push("/index")}>
+        {/* <TouchableOpacity style={styles.contactBtn} onPress={() => router.push("/index")}>
           <Text style={styles.contactText}>TEST SCREEN</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </GradientBackground>
   );

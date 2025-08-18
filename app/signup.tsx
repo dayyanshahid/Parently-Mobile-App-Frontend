@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledTextInput from "../components/StyledTextInput";
 import StyledButton from "../components/StyledButton";
@@ -17,7 +17,6 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Loader state
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<number | null>(null);
@@ -49,7 +48,7 @@ export default function SignupScreen() {
 
   return (
     <GradientBackground showLogo>
-      <Loader loading={showLoader} />
+      {/* <Loader loading={showLoader} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.title}>Create Account</Text>
@@ -60,7 +59,7 @@ export default function SignupScreen() {
             leftIcon={<MaterialCommunityIcons name="account-outline" size={22} color="#888" />}
           />
           <StyledTextInput
-            placeholder="abc@email.com"
+            placeholder="Email/Phone"
             value={email}
             onChangeText={setEmail}
             leftIcon={<MaterialCommunityIcons name="email-outline" size={22} color="#888" />}
@@ -101,13 +100,12 @@ export default function SignupScreen() {
           <Text style={styles.or}>OR</Text>
           <SocialButton
             title="Login with Google"
-            icon={<FontAwesome name="google" size={24} color="#EA4335" />}
+            icon={<Image source={require("../assets/Google.png")} style={{ width: 22, height: 22 }} />}
             onPress={() => {}}
-            style={styles.socialBtn}
-          />
+            />
           <SocialButton
             title="Login with Facebook"
-            icon={<FontAwesome name="facebook" size={24} color="#1877F3" />}
+            icon={<FontAwesome name="facebook" size={24} color={"#0956fdff"}/>}
             onPress={() => {}}
             style={styles.socialBtn}
           />

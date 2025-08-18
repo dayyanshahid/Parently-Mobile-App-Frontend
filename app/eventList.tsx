@@ -201,7 +201,7 @@ export default function EventList({ navigation }: any) {
       <View style={styles.container}>
         <HeaderSection title="All Events" />
         
-        <ScrollView style={styles.contentContainer}>
+        <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
           {renderFilterChips()}
           
           <View style={styles.eventsContainer}>

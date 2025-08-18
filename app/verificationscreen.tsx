@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
   },
   verifyBtn: {
-    backgroundColor: "#c93c7c",
+    // backgroundColor: "#c93c7c",
     borderRadius: 32,
     height: 56,
     justifyContent: "center",
