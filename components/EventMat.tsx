@@ -3,6 +3,9 @@ import GradientBackground from "./GradientBackground";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import BackButton from "./BackButton";
+import { spacing } from "../utils/responsive";
+import { colors, typography, borderRadius } from "../utils/theme";
 
 interface EventMatProps {
   children: React.ReactNode;
@@ -11,14 +14,18 @@ interface EventMatProps {
 }
 
 export default function EventMat({ children, title, subtitle }: EventMatProps) {
+    const hasSubtitle = Boolean(subtitle);
   return (
-    <GradientBackground>
-      <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#fff" />
-        </TouchableOpacity>
+    <GradientBackground style={styles.container}>
+      <View style={styles.header}>
+        <BackButton />
+        <View style={[
+            styles.titleContainer,
+            { paddingTop: hasSubtitle ? spacing.sm : spacing.md },
+          ]}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        </View>
       </View>
       <View style={styles.body}>
        {children}
@@ -27,29 +34,39 @@ export default function EventMat({ children, title, subtitle }: EventMatProps) {
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    // paddingTop: '13%'
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.md,
+  },
+  titleContainer: {
+    paddingLeft: spacing.xxl,
+    paddingVertical: spacing.xs,
+    gap: spacing.xs / 2,
+  },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 10,
+    fontSize: typography.fontSize.heading3,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.white,
   },
   subtitle: {
-    fontSize: 16,
-    color: "#fff",
-    marginBottom: 20,
+    fontSize: typography.fontSize.md,
+    color: colors.white,
     textAlign: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
+    fontFamily: typography.fontFamily.regular,
   },
   body: {
     flex: 1,
-    paddingTop: "1%",
-    borderRadius: 36,
-    backgroundColor: "white",
+    bottom: 0,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.lg,
+    borderStartStartRadius: borderRadius.xxxl,
+    borderTopEndRadius: borderRadius.xxxl,
+    backgroundColor: colors.white,
   },
 });

@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+yarn.lock
+package-lock.json
+
+# Native project folders (for CNG/Prebuild workflow)
+/android
+/ios
+
+# Build outputs
+build/
+dist/
+.expo/
+
+# Development files
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Temporary folders
+temporaryfolder/
+
+# Large assets that aren't needed for build
+*.tar
+*.tar.gz
+parently.tar.gz
+parently.tar/
+
+# Documentation
+*.md
+TODO.md
+BUILD_INSTRUCTIONS.md
+IOS_BUILD_GUIDE.md
+
+# Scripts
+build-android.sh
+
+# ESLint
+.eslintrc.js

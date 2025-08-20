@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, ViewStyle, View } from "react-nativ
 
 type SocialButtonProps = {
   title: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   onPress: () => void;
   style?: ViewStyle;
 };
@@ -11,7 +11,7 @@ type SocialButtonProps = {
 export default function SocialButton({ title, icon, onPress, style }: SocialButtonProps) {
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress} activeOpacity={0.85}>
-      <View style={styles.icon}>{icon}</View>
+      {icon && <View style={styles.icon}>{icon}</View>}
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
@@ -28,15 +28,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#eee",
+    elevation: 1,
+    justifyContent: "center",
   },
   icon: {
-    marginRight: 12,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 12,
+    width: 24,
+    height: 24,
   },
   text: {
     color: "#222",
     fontSize: 16,
     fontWeight: "500",
+    textAlign: "center",
   },
 });

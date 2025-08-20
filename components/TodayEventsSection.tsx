@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 const TODAY_EVENTS = [
@@ -9,7 +9,7 @@ const TODAY_EVENTS = [
     title: "Harry Soccer",
     icons: [
       { type: "emoji", value: "⚽" },
-      { type: "avatar", value: "👧" },
+      { type: "avatar", value: "👦" },
     ],
   },
   {
@@ -35,52 +35,65 @@ interface TodayEventsSectionProps {
   onSeeAll?: () => void;
 }
 
-export default function TodayEventsSection({ 
-  events = TODAY_EVENTS, 
-  onAddEvent, 
-  onSeeAll 
-}: TodayEventsSectionProps) {
+export default function TodayEventsSection({ events = TODAY_EVENTS, onAddEvent, onSeeAll }: TodayEventsSectionProps) {
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
   const renderEventIcons = (icons: any[]) => (
     <View style={styles.eventIconsContainer}>
       {icons.map((icon, idx) => {
-        if (icon.type === "emoji") {
-          return (
-            <Text key={idx} style={styles.eventEmoji}>
-              {icon.value}
-            </Text>
-          );
-        } else if (icon.type === "avatar") {
-          return (
-            <View key={idx} style={styles.avatarPlaceholder}>
-              <Text style={{ fontSize: 14 }}>{icon.value}</Text>
-            </View>
-          );
-        }
+        if (icon.type === "emoji") return <Text key={idx} style={styles.eventEmoji}>{icon.value}</Text>;
+        if (icon.type === "avatar") return (
+          <View key={idx} style={styles.avatarPlaceholder}>
+            <Text style={{ fontSize: 14 }}>{icon.value}</Text>
+          </View>
+        );
         return null;
       })}
     </View>
   );
 
-  const renderTodayEvent = ({ item }: any) => (
-    <View style={styles.todayEventCard}>
-      <Text style={styles.eventTime}>{item.time}</Text>
-      <View style={styles.eventDetails}>
-        <Text style={styles.eventTitle}>{item.title}</Text>
+  const renderTodayEvent = ({ item }: any) => {
+    const isSelected = selectedKey === item.key;
+
+    return (
+      <View style={styles.eventRow}>
+        {/* Time outside the elevated card */}
+        <Text style={styles.eventTime}>{item.time}</Text>
+
+        {/* Elevated card for the rest */}
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setSelectedKey(item.key)}
+          style={[styles.todayEventCard,
+    isSelected && styles.selectedEventCard,
+          
+          ]}
+        >
+          <View style={styles.eventDetails}>
+            <Text style={styles.eventTitle}>{item.title}</Text>
+          </View>
+          {renderEventIcons(item.icons)}
+        </TouchableOpacity>
       </View>
-      {renderEventIcons(item.icons)}
-    </View>
-  );
+    );
+  };
 
   return (
     <View>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Today</Text>
-        <TouchableOpacity style={styles.plusButton} onPress={onAddEvent}>
-          <Feather name="plus" size={20} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onSeeAll}>
-          <Text style={styles.seeAllText}>See all</Text>
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          {onAddEvent && (
+            <TouchableOpacity style={styles.plusButton} onPress={onAddEvent}>
+              <Feather name="plus" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
+          {onSeeAll && (
+            <TouchableOpacity onPress={onSeeAll} style={styles.seeAllButton}>
+              <Text style={styles.seeAllText}>See all</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
       <FlatList
         data={events}
@@ -97,39 +110,59 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
   },
   sectionTitle: {
-    color: "black",
+    color: "#222",
     fontWeight: "bold",
     fontSize: 18,
-    flex: 1,
+  },
+  headerButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   plusButton: {
     backgroundColor: "#c93c7c",
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+  },
+  seeAllButton: {
+    justifyContent: "center",
   },
   seeAllText: {
-    color: "#c93c7c",
-    fontWeight: "bold",
+    color: "#fe3ad3ff",
+    fontWeight: "600",
     fontSize: 14,
   },
   todayEventsList: {
     marginBottom: 24,
+    marginTop:10,
+  },
+  eventRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
   },
   todayEventCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    marginBottom: 12,
+    borderRadius: 18,
+    backgroundColor: "#ffffffff",
+    borderWidth: 1,
+    borderColor: "#f4f4f4",
+    marginLeft: 12,
+  },
+  selectedEventCard: {
+    borderColor: "#ff000095",
+    borderWidth: 1
   },
   eventTime: {
     color: "#888",
@@ -138,6 +171,7 @@ const styles = StyleSheet.create({
   },
   eventDetails: {
     flex: 1,
+    marginRight: 8,
   },
   eventTitle: {
     color: "#222",
@@ -152,12 +186,12 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   avatarPlaceholder: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#f0f0f0",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#f2f1f0",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    marginLeft: 4,
   },
 });

@@ -1,24 +1,16 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, PixelRatio, Platform } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
-
-const { width, height } = Dimensions.get("window");
-
-// Helper functions for scaling
-const scale = size => (width / 375) * size; // 375 = base iPhone width
-const verticalScale = size => (height / 812) * size; // 812 = base iPhone height
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
+import { scale, verticalScale, moderateScale, spacing } from "../utils/responsive";
+import { platformSelect } from "../utils/platform";
+import { colors, typography } from "../utils/theme";
 
 export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const timeoutDuration = Platform.select({
-      ios: 3000,
-      android: 3000,
-    });
+    const timeoutDuration = 3000;
 
     const timer = setTimeout(() => {
       router.replace("/login");
@@ -31,7 +23,7 @@ export default function SplashScreen() {
     <GradientBackground style={styles.container}>
       <View style={styles.content}>
         {/* Bar above P */}
-        <View style={{ alignItems: "center", marginBottom: verticalScale(10) }}>
+        <View style={styles.logoContainer}>
           <View style={styles.bar} />
           <Text style={styles.logo}>PARENTLY</Text>
         </View>
@@ -54,50 +46,53 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(20),
     zIndex: 1,
   },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
   bar: {
     width: scale(27),
     height: verticalScale(7),
-    backgroundColor: "#fff",
-    marginBottom: 
-      Platform.select({
-        ios: -verticalScale(10),       // iOS field value
-        android: -verticalScale(14),   // Android field value
-      }),
-    marginLeft: 
-      Platform.select({
-        ios: scale(3),       // iOS field value
-        android: scale(4),   // Android field value
-      }),
+    backgroundColor: colors.white,
+    marginBottom: platformSelect({
+      ios: -verticalScale(10),
+      android: -verticalScale(14),
+    }),
+    marginLeft: platformSelect({
+      ios: scale(3),
+      android: scale(4),
+    }),
     alignSelf: "flex-start",
   },
   logo: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: moderateScale(58),
+    color: colors.white,
+    fontWeight: typography.fontWeight.bold,
+    fontSize: typography.fontSize.display,
+    fontFamily: typography.fontFamily.bold,
   },
   tagline: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    letterSpacing:
-      Platform.select({
-        ios: scale(2),       // iOS field value
-        android: scale(3),   // Android field value
-      }),
+    color: colors.white,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.medium,
+    letterSpacing: platformSelect({
+      ios: typography.letterSpacing.wide,
+      android: typography.letterSpacing.wider,
+    }),
     textAlign: "center",
-    marginTop: 
-      Platform.select({
-        ios: -verticalScale(15),       // iOS field value
-        android: -verticalScale(20),   // Android field value
-      }),
+    marginTop: platformSelect({
+      ios: -verticalScale(15),
+      android: -verticalScale(20),
+    }),
   },
   powered: {
     position: "absolute",
     bottom: verticalScale(50),
     width: "100%",
     textAlign: "center",
-    color: "#fff",
-    fontSize: moderateScale(14),
-    letterSpacing: scale(2),
+    color: colors.white,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.regular,
+    letterSpacing: typography.letterSpacing.wide,
     opacity: 0.8,
     zIndex: 1,
   },

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledTextInput from "../components/StyledTextInput";
 import StyledButton from "../components/StyledButton";
@@ -7,6 +7,10 @@ import SocialButton from "../components/SocialButton";
 import Loader from "../components/Loader";
 import { MaterialCommunityIcons, FontAwesome, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { spacing, responsiveDimensions } from "../utils/responsive";
+import { getShadow } from "../utils/platform";
+import { colors, typography, borderRadius } from "../utils/theme";
+import { registerUser } from "../components/api"; // ✅ import signup from api.js
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -17,11 +21,9 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Loader state
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<number | null>(null);
-
 
   useEffect(() => {
     if (loading) {
@@ -35,16 +37,36 @@ export default function SignupScreen() {
     }
   }, [loading]);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
+    if (!name || !email || !password || !confirm) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
+    if (password !== confirm) {
+      Alert.alert("Error", "Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const res = await registerUser( email, password, name);
+
+      if (res.success) {
+        // ✅ Navigate after signup success
+        router.push({
+          pathname: "/verificationscreen",
+          params: { fromCreateAccount: "true" }
+        });
+      } else {
+        Alert.alert("Signup failed", res.message || "Unknown error");
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      Alert.alert("Error", "Something went wrong. Try again.");
+    } finally {
       setLoading(false);
-      router.push({
-        pathname: "/verificationscreen",
-        params: { fromCreateAccount: "true" }
-      });
-    }, 1800);
+    }
   };
 
   return (
@@ -53,64 +75,104 @@ export default function SignupScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.title}>Create Account</Text>
+
           <StyledTextInput
             placeholder="Full name"
             value={name}
             onChangeText={setName}
-            leftIcon={<MaterialCommunityIcons name="account-outline" size={22} color="#888" />}
+            leftIcon={
+              <MaterialCommunityIcons 
+                name="account-outline" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
           />
+
           <StyledTextInput
-            placeholder="abc@email.com"
+            placeholder="Email/Phone"
             value={email}
             onChangeText={setEmail}
-            leftIcon={<MaterialCommunityIcons name="email-outline" size={22} color="#888" />}
+            leftIcon={
+              <MaterialCommunityIcons 
+                name="email-outline" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
             keyboardType="email-address"
             autoCapitalize="none"
           />
+
           <StyledTextInput
             placeholder="Your password"
             value={password}
             onChangeText={setPassword}
-            leftIcon={<Feather name="lock" size={22} color="#888" />}
+            leftIcon={
+              <Feather 
+                name="lock" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
             rightIcon={
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather name={showPassword ? "eye-off" : "eye"} size={22} color="#888" />
+                <Feather 
+                  name={showPassword ? "eye-off" : "eye"} 
+                  size={responsiveDimensions.iconSize.md} 
+                  color={colors.textTertiary} 
+                />
               </TouchableOpacity>
             }
             secureTextEntry={!showPassword}
           />
+
           <StyledTextInput
             placeholder="Confirm password"
             value={confirm}
             onChangeText={setConfirm}
-            leftIcon={<Feather name="lock" size={22} color="#888" />}
+            leftIcon={
+              <Feather 
+                name="lock" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
             rightIcon={
               <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-                <Feather name={showConfirm ? "eye-off" : "eye"} size={22} color="#888" />
+                <Feather 
+                  name={showConfirm ? "eye-off" : "eye"} 
+                  size={responsiveDimensions.iconSize.md} 
+                  color={colors.textTertiary} 
+                />
               </TouchableOpacity>
             }
             secureTextEntry={!showConfirm}
           />
+
           <StyledButton
-            title="Sign in"
+            title="Sign up"
             onPress={handleSignup}
             style={styles.signinBtn}
           >
             <Text style={styles.arrow}>→</Text>
           </StyledButton>
+
           <Text style={styles.or}>OR</Text>
+
           <SocialButton
             title="Login with Google"
-            icon={<FontAwesome name="google" size={24} color="#EA4335" />}
+            icon={<Image source={require("../assets/Google.png")} style={styles.socialIcon} />}
             onPress={() => {}}
-            style={styles.socialBtn}
           />
+
           <SocialButton
             title="Login with Facebook"
-            icon={<FontAwesome name="facebook" size={24} color="#1877F3" />}
+            icon={<FontAwesome name="facebook" size={responsiveDimensions.iconSize.lg} color={colors.secondary} />}
             onPress={() => {}}
             style={styles.socialBtn}
           />
+
           <View style={styles.loginRow}>
             <Text style={styles.loginText}>Already have an account? </Text>
             <TouchableOpacity onPress={() => router.push("/login")}>
@@ -128,65 +190,72 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 24,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 36,
-    padding: 28,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxxl,
+    padding: spacing.xl,
     width: "90%",
     maxWidth: 400,
     alignItems: "stretch",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
-    marginBottom: 24,
+    marginBottom: spacing.xl,
+    ...getShadow('card'),
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#222",
-    marginBottom: 24,
+    fontSize: typography.fontSize.heading2,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xl,
   },
   signinBtn: {
-    backgroundColor: "#e24fa3",
-    borderRadius: 32,
-    height: 56,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.xl,
+    height: responsiveDimensions.buttonHeight.large,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 18,
+    marginVertical: spacing.lg,
   },
   arrow: {
-    color: "#fff",
-    fontSize: 22,
-    marginLeft: 8,
-    fontWeight: "bold",
+    color: colors.white,
+    fontSize: typography.fontSize.xl,
+    marginLeft: spacing.sm,
+    fontWeight: typography.fontWeight.bold,
   },
   or: {
     textAlign: "center",
-    color: "#888",
-    fontSize: 16,
-    marginVertical: 12,
-    fontWeight: "500",
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.lg,
+    marginVertical: spacing.xs,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
+  },
+  socialIcon: {
+    width: responsiveDimensions.iconSize.lg,
+    height: responsiveDimensions.iconSize.lg,
   },
   socialBtn: {
-    backgroundColor: "#f6f6f6",
-    borderColor: "#f6f6f6",
-    marginBottom: 16,
+    backgroundColor: colors.backgroundSecondary,
+    borderColor: colors.backgroundSecondary,
+    marginBottom: spacing.md,
   },
   loginRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 12,
+    marginTop: spacing.xs,
   },
   loginText: {
-    color: "#888",
-    fontSize: 15,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily.regular,
   },
   loginLink: {
-    color: "#2a6cf6",
-    fontSize: 15,
-    fontWeight: "bold",
+    color: colors.secondary,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
   },
 });

@@ -1,14 +1,107 @@
 {
   "expo": {
-    "name": "parently",
+    "name": "Parently",
+    "description": "Your Life Admin Assistant - Powered by AI",
     "slug": "parently",
     "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
     "jsEngine": "jsc",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#e91e63"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
-      "package": "com.anonymous.parently"
+      "package": "com.parently.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#e91e63"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "softwareKeyboardLayoutMode": "pan",
+      "userInterfaceStyle": "light",
+      "allowBackup": false,
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.parently.app"
     },
     "ios": {
-      "bundleIdentifier": "com.anonymous.parently"
-    }
+      "bundleIdentifier": "com.parently.app",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "requireFullScreen": false,
+      "userInterfaceStyle": "light",
+      "infoPlist": {
+        "UIUserInterfaceStyle": "Light",
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent",
+        "UIViewControllerBasedStatusBarAppearance": false,
+        "NSCameraUsageDescription": "This app uses the camera to capture photos for events and profiles.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone for voice notes and communication features.",
+        "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select images for events and profiles.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "appStoreUrl": "https://apps.apple.com/app/parently/id123456789"
+    },
+    "web": {
+      "favicon": "./assets/logo.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts"
+          ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "minSdkVersion": 21
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8d9f4fb4-93c1-4269-b2a0-085b19fe648a"
+      }
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": "1.0.0",
+    "owner": "dequr01"
   }
 }

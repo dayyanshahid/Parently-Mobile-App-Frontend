@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledTextInput from "../components/StyledTextInput";
 import StyledButton from "../components/StyledButton";
@@ -7,13 +7,16 @@ import SocialButton from "../components/SocialButton";
 import { MaterialCommunityIcons, FontAwesome, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Loader from "../components/Loader";
+import { spacing, responsiveDimensions } from "../utils/responsive";
+import { getShadow } from "../utils/platform";
+import { colors, typography, borderRadius } from "../utils/theme";
+import { getToken, loginUser } from "../components/api";
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Loader state
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<number | null>(null);
@@ -30,16 +33,38 @@ export default function LoginScreen() {
     }
   }, [loading]);
 
-  const handleLogin = () => {
+  // Auto login if token exists
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await getToken();
+      if (token) {
+        router.push("/homescreen");
+      }
+    };
+    checkToken();
+  }, []);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const data = await loginUser(email, password);
+      console.log("Login success:", data);
+
       setLoading(false);
       router.push({
         pathname: "/verificationscreen",
-        params: { fromSignIn: "true" }
+        params: { fromSignIn: "true" },
       });
-    }, 1800);
-  }; 
+    } catch (err) {
+      setLoading(false);
+      alert(err.message || "Login failed. Please try again.");
+    }
+  };
 
   const handleForgotpassword = () => {
     setLoading(true);
@@ -59,7 +84,13 @@ export default function LoginScreen() {
             placeholder="Enter email or phone no."
             value={email}
             onChangeText={setEmail}
-            leftIcon={<MaterialCommunityIcons name="email-outline" size={22} color="#888" />}
+            leftIcon={
+              <MaterialCommunityIcons 
+                name="email-outline" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -67,9 +98,23 @@ export default function LoginScreen() {
             placeholder="Your password"
             value={password}
             onChangeText={setPassword}
-            leftIcon={<Feather name="lock" size={22} color="#888" />}
-            rightIcon={<Feather name="eye" size={22} color="#888" />}
-            secureTextEntry
+            leftIcon={
+              <Feather 
+                name="lock" 
+                size={responsiveDimensions.iconSize.md} 
+                color={colors.textTertiary} 
+              />
+            }
+            rightIcon={
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Feather 
+                  name={showPassword ? "eye-off" : "eye"} 
+                  size={responsiveDimensions.iconSize.md} 
+                  color={colors.textTertiary} 
+                />
+              </TouchableOpacity>
+            }
+            secureTextEntry={!showPassword}
           />
           <TouchableOpacity style={styles.forgotBtn} onPress={handleForgotpassword}>
             <Text style={styles.forgotText}>Forgot Password?</Text>
@@ -79,15 +124,25 @@ export default function LoginScreen() {
           </StyledButton>
           <Text style={styles.or}>OR</Text>
           <SocialButton
-            title="Login with Google"
-            icon={<FontAwesome name="google" size={24} color="#EA4335" />}
-            onPress={() => {}}
-          />
+              title="Login with Google"
+              icon={
+                <Image 
+                  source={require("../assets/Google.png")} 
+                  style={styles.socialIcon} 
+                />
+              }
+              onPress={() => {}}
+            />
           <SocialButton
-            title="Login with Outlook"
-            icon={<MaterialCommunityIcons name="microsoft-outlook" size={24} color="#0072C6" />}
-            onPress={() => {}}
-          />
+              title="Login with Outlook"
+              icon={
+                <Image 
+                  source={require("../assets/Outlook.png")} 
+                  style={styles.socialIcon} 
+                />
+              }
+              onPress={() => {}}
+            />
           <View style={styles.signupRow}>
             <Text style={styles.signupText}>Don’t have an account? </Text>
             <TouchableOpacity onPress={() => router.push("/signup")}>
@@ -109,74 +164,82 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
-    // justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 24,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 36,
-    padding: 28,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxxl,
+    padding: spacing.xl,
     width: "90%",
     maxWidth: 400,
     alignItems: "stretch",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
-    marginBottom: 24,
+    marginBottom: spacing.xl,
+    ...getShadow('card'),
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#222",
-    marginBottom: 24,
+    fontSize: typography.fontSize.heading2,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xl,
   },
   forgotBtn: {
     alignSelf: "flex-end",
-    marginBottom: 12,
+    marginBottom: spacing.xs,
   },
   forgotText: {
-    color: "#e24fa3",
-    fontSize: 14,
-    fontWeight: "500",
+    color: colors.primary,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
   },
   arrow: {
-    color: "#fff",
-    fontSize: 22,
-    marginLeft: 8,
-    fontWeight: "bold",
+    color: colors.white,
+    fontSize: typography.fontSize.xl,
+    marginLeft: spacing.sm,
+    fontWeight: typography.fontWeight.bold,
   },
   or: {
     textAlign: "center",
-    color: "#888",
-    fontSize: 16,
-    marginVertical: 12,
-    fontWeight: "500",
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.lg,
+    marginVertical: spacing.xs,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
+  },
+  socialIcon: {
+    width: responsiveDimensions.iconSize.lg,
+    height: responsiveDimensions.iconSize.lg,
   },
   signupRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: spacing.sm,
     marginBottom: 0,
   },
   signupText: {
-    color: "#888",
-    fontSize: 15,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.regular,
+    fontFamily: typography.fontFamily.regular,
   },
   signupLink: {
-    color: "#2a6cf6",
-    fontSize: 15,
-    fontWeight: "bold",
+    color: colors.secondary,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
   },
   contactBtn: {
     alignSelf: "center",
-    marginTop: 12,
+    marginTop: spacing.xs,
   },
   contactText: {
-    color: "#2a6cf6",
-    fontSize: 15,
+    color: colors.secondary,
+    fontSize: typography.fontSize.md,
     textDecorationLine: "underline",
-    fontWeight: "500",
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
   },
 });

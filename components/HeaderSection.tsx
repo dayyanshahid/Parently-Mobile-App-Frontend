@@ -2,6 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { spacing, responsiveDimensions } from "../utils/responsive";
+import { colors, typography } from "../utils/theme";
+import { platformSelect } from "../utils/platform";
 
 const HEADER_ICONS = [
   { name: "search", key: "search", hasDot: false },
@@ -20,12 +23,14 @@ export default function HeaderSection({ title = "PARENTLY" }: HeaderSectionProps
     const handlePress = () => {
       if (key === "plus") {
         router.push("/createEvent");
+      } else if (key === "bell") {
+        router.push("/notificationScreen");
       }
     };
 
     return (
       <TouchableOpacity key={key} style={styles.iconButton} onPress={handlePress}>
-        <Feather name={name} size={17} color="black" />
+        <Feather name={name} size={responsiveDimensions.iconSize.sm} color={colors.textPrimary} />
         {hasDot && <View style={styles.redDot} />}
       </TouchableOpacity>
     );
@@ -49,8 +54,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 20,
-    paddingHorizontal: 10,
+    marginVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
   },
   logoContainer: {
     flexDirection: "column",
@@ -58,44 +63,44 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   bar: {
-    width: 13, // smaller than splash
-    height: 3,
-    backgroundColor: "#fff",
-    marginBottom: Platform.select({
-      ios: -3,
-      android: -5,
+    width: responsiveDimensions.iconSize.xs,
+    height: spacing.xs / 2,
+    backgroundColor: colors.white,
+    marginBottom: platformSelect({
+      ios: -spacing.xs / 2,
+      android: -spacing.xs,
     }),
-    marginLeft: Platform.select({
-      ios: 1.25,
-      android: 2,
+    marginLeft: platformSelect({
+      ios: spacing.xs / 4,
+      android: spacing.xs / 2,
     }),
   },
   logoText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 24,
+    color: colors.white,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    fontSize: typography.fontSize.heading2,
   },
   headerIconsContainer: {
     flexDirection: "row",
-    // backgroundColor: 'red'
   },
   iconButton: {
-    backgroundColor: "white",
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    backgroundColor: colors.white,
+    width: responsiveDimensions.avatarSize.sm,
+    height: responsiveDimensions.avatarSize.sm,
+    borderRadius: responsiveDimensions.avatarSize.sm / 2,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 12,
+    marginLeft: spacing.xs,
     position: "relative",
   },
   redDot: {
     position: "absolute",
-    top: 6,
-    right: 10,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#ff3b30",
+    top: spacing.xs / 2,
+    right: spacing.sm,
+    width: responsiveDimensions.iconSize.xs / 2,
+    height: responsiveDimensions.iconSize.xs / 2,
+    borderRadius: responsiveDimensions.iconSize.xs / 4,
+    backgroundColor: colors.error,
   },
 });

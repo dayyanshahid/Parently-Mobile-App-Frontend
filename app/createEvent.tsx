@@ -6,12 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import GradientBackground from "../components/GradientBackground";
-import HeaderSection from "../components/HeaderSection";
-import StyledButton from "../components/StyledButton";
+import { Ionicons } from "@expo/vector-icons";
 import EventMat from "../components/EventMat";
+import StyledButton from "../components/StyledButton";
+import { useRouter } from "expo-router";
 
 interface EventData {
   title: string;
@@ -19,128 +20,182 @@ interface EventData {
   time: string;
   child: string;
   type: string;
+  host: string;
+  role: "host" | "cohost";
 }
 
 export default function CreateEvent({ navigation }: any) {
+  const router = useRouter();
   const [eventData, setEventData] = useState<EventData>({
     title: "",
     description: "",
     time: "",
     child: "",
     type: "",
+    host: "",
+    role: "host",
   });
 
   const handleInputChange = (field: keyof EventData, value: string) => {
-    setEventData(prev => ({ ...prev, [field]: value }));
+    setEventData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSaveEvent = () => {
-    console.log("Saving event:", eventData);
-    navigation.goBack();
+  const handleNext = () => {
+    console.log("Navigating to date/time with event data:", eventData);
+    router.push("/eventDateTime");
   };
 
   return (
-    <EventMat title="Create New Event" subtitle="Plan your event in a few simple steps">
-      <ScrollView style={styles.container}>
-        <View style={styles.formContainer}>
-          <Text style={styles.sectionTitle}>Basic Info</Text>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Event Title</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Emma's 8th Birthday Party"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              value={eventData.title}
-              onChangeText={(text) => handleInputChange("title", text)}
-            />
+    <EventMat
+      title="Create New Event"
+      subtitle="Plan your event in a few simple steps"
+    >
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: "12%" }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Icon + Title */}
+          <View style={{ alignItems: "center", marginBottom: 20 }}>
+            <View
+              style={{
+                backgroundColor: "#e91e63",
+                width: 70,
+                height: 70,
+                borderRadius: 35,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+              }}
+            >
+              <Ionicons name="person-circle-outline" size={40} color="#fff" />
+            </View>
+            <Text style={{ fontSize: 18, fontWeight: "600" }}>Basic Info</Text>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Event Type</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Birthday, Dinner, Family Trip"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              value={eventData.type}
-              onChangeText={(text) => handleInputChange("type", text)}
-            />
-          </View>
+          {/* Event Title */}
+          <Text style={{ marginBottom: 6, fontWeight: "500" }}>Event Title</Text>
+          <TextInput
+            placeholder="e.g. Emma's 8th Birthday Party"
+            value={eventData.title}
+            onChangeText={(text) => handleInputChange("title", text)}
+            style={styles.input}
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Description (Optional)</Text>
+          {/* Event Type */}
+          <Text style={{ marginTop: 16, marginBottom: 6, fontWeight: "500" }}>
+            Event Type
+          </Text>
+          <TextInput
+            placeholder="e.g. Birthday, Dinner, Family Trip"
+            value={eventData.type}
+            onChangeText={(text) => handleInputChange("type", text)}
+            style={styles.input}
+          />
+
+          {/* Description */}
+          <Text style={{ marginTop: 16, marginBottom: 6, fontWeight: "500" }}>
+            Description (Optional)
+          </Text>
+          <View style={{ position: "relative" }}>
             <TextInput
-              style={[styles.input, styles.textArea]}
               placeholder="Enter details here..."
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
               value={eventData.description}
               onChangeText={(text) => handleInputChange("description", text)}
+              style={[styles.input, { height: 100, textAlignVertical: "top" }]}
               multiline
-              numberOfLines={4}
+            />
+            <Ionicons
+              name="mic-outline"
+              size={22}
+              color="gray"
+              style={{ position: "absolute", right: 12, bottom: 12 }}
             />
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Host + Organiser(s)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Sarah Balmer"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              value={eventData.child}
-              onChangeText={(text) => handleInputChange("child", text)}
-            />
+          {/* Host + Organiser */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: 16,
+              marginBottom: 8,
+            }}
+          >
+            <Text style={{ fontWeight: "500" }}>Host + Organiser(s)</Text>
+            <Text style={{ color: "#e91e63", fontWeight: "600" }}>
+              + Add another
+            </Text>
+          </View>
+          <TextInput
+            placeholder="e.g. Sarah Balmer"
+            value={eventData.host}
+            onChangeText={(text) => handleInputChange("host", text)}
+            style={styles.input}
+          />
+
+          {/* Host / Co-host selection */}
+          <View style={{ flexDirection: "row", marginTop: 12 }}>
+            <TouchableOpacity
+              style={styles.radioWrapper}
+              onPress={() => handleInputChange("role", "host")}
+            >
+              <Ionicons
+                name={
+                  eventData.role === "host"
+                    ? "radio-button-on"
+                    : "radio-button-off"
+                }
+                size={20}
+                color={eventData.role === "host" ? "#e91e63" : "gray"}
+              />
+              <Text style={{ marginLeft: 6 }}>Host</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.radioWrapper, { marginLeft: 20 }]}
+              onPress={() => handleInputChange("role", "cohost")}
+            >
+              <Ionicons
+                name={
+                  eventData.role === "cohost"
+                    ? "radio-button-on"
+                    : "radio-button-off"
+                }
+                size={20}
+                color={eventData.role === "cohost" ? "#e91e63" : "gray"}
+              />
+              <Text style={{ marginLeft: 6 }}>Co-host</Text>
+            </TouchableOpacity>
           </View>
 
-          <StyledButton title="Next" onPress={handleSaveEvent} />
-        </View>
-      </ScrollView>
+          {/* Next Button */}
+          <View style={{ marginBottom: 20, paddingHorizontal: "5%", marginTop: 20 }}>
+            <StyledButton title="Next" onPress={handleNext} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </EventMat>
   );
 }
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  formContainer: {
-    paddingBottom: 100,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "black",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "black",
-    marginBottom: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: "black",
-    marginBottom: 8,
-  },
   input: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 12,
-    padding: 15,
-    color: "black",
-    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 14,
+    backgroundColor: "#fafafa",
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  backButton: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
+  radioWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
   },
 });

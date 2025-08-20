@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 
 const REMINDERS = [
   {
@@ -18,20 +24,49 @@ const REMINDERS = [
   },
 ];
 
-interface RemindersSectionProps {
-  reminders?: typeof REMINDERS;
-  onSeeAll?: () => void;
+interface ReminderItem {
+  key: string;
+  title: string;
+  description: string;
+  time: string;
+  emoji: string;
 }
 
-export default function RemindersSection({ reminders = REMINDERS, onSeeAll }: RemindersSectionProps) {
-  const renderReminder = ({ item }: any) => (
-    <TouchableOpacity style={styles.reminderCard}>
+interface RemindersSectionProps {
+  reminders?: ReminderItem[];
+  onSeeAll?: () => void;
+  onPressReminder?: (reminder: ReminderItem) => void;
+}
+
+export default function RemindersSection({
+  reminders = REMINDERS,
+  onSeeAll,
+  onPressReminder,
+}: RemindersSectionProps) {
+  const renderReminder = ({ item }: { item: ReminderItem }) => (
+    <TouchableOpacity
+      style={styles.reminderCard}
+      activeOpacity={0.7}
+      onPress={() => onPressReminder?.(item)}
+    >
       <View style={styles.emojiContainer}>
         <Text style={styles.emoji}>{item.emoji}</Text>
       </View>
       <View style={styles.reminderDetails}>
-        <Text style={styles.reminderTitle}>{item.title}</Text>
-        <Text style={styles.reminderDescription}>{item.description}</Text>
+        <Text
+          style={styles.reminderTitle}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {item.title}
+        </Text>
+        <Text
+          style={styles.reminderDescription}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {item.description}
+        </Text>
       </View>
       <Text style={styles.reminderTime}>{item.time}</Text>
     </TouchableOpacity>
@@ -39,21 +74,35 @@ export default function RemindersSection({ reminders = REMINDERS, onSeeAll }: Re
 
   return (
     <View>
-      <View style={styles.sectionHeader}>
+      <View
+        style={[
+          styles.sectionHeader,
+          { flexDirection: "row", justifyContent: "space-between" },
+        ]}
+      >
         <Text style={styles.sectionTitle}>Reminders</Text>
         {onSeeAll && (
-          <TouchableOpacity onPress={onSeeAll}>
+          <TouchableOpacity onPress={onSeeAll} activeOpacity={0.6}>
             <Text style={styles.seeAllText}>See all</Text>
           </TouchableOpacity>
         )}
       </View>
-      <FlatList
-        data={reminders}
-        renderItem={renderReminder}
-        keyExtractor={(item) => item.key}
-        scrollEnabled={false}
-        style={styles.remindersList}
-      />
+
+      {reminders.length > 0 ? (
+        <FlatList
+          data={reminders}
+          renderItem={renderReminder}
+          keyExtractor={(item) => item.key}
+          scrollEnabled={false}
+          style={styles.remindersList}
+          initialNumToRender={3}
+          removeClippedSubviews
+        />
+      ) : (
+        <Text style={{ color: "#888", fontSize: 14, marginTop: 8, alignSelf: "center" }}>
+          No reminders are set yet.
+        </Text>
+      )}
     </View>
   );
 }
@@ -61,7 +110,7 @@ export default function RemindersSection({ reminders = REMINDERS, onSeeAll }: Re
 const styles = StyleSheet.create({
   sectionHeader: {
     paddingTop: 8,
-    marginTop: 16,
+    marginVertical: 16,
   },
   sectionTitle: {
     fontSize: 18,
@@ -77,21 +126,23 @@ const styles = StyleSheet.create({
   reminderCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffffff",
     borderRadius: 16,
     padding: 12,
-    marginBottom: 12,
+    marginBottom: 16,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.02,
+    shadowOffset: { width: 0, height: 0 },
     shadowRadius: 6,
-    elevation: 2,
+    borderColor: "#f4f4f4",
+    borderWidth: 1,
+    // elevation: 0,
   },
   emojiContainer: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: "#f9d6db",
+    backgroundColor: "#f9d6dbaf",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,

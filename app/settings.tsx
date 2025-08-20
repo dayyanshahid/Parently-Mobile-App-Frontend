@@ -12,6 +12,9 @@ import { useRouter } from "expo-router";
 import GradientBackground from "../components/GradientBackground";
 import BottomNavigation from "../components/BottomNavigation";
 import BackButton from "../components/BackButton";
+import { spacing, responsiveDimensions } from "../utils/responsive";
+import { getShadow } from "../utils/platform";
+import { colors, typography, borderRadius } from "../utils/theme";
 
 const SETTINGS_SECTIONS = [
   {
@@ -88,7 +91,7 @@ export default function SettingsScreen() {
     >
       <View style={styles.settingLeft}>
         <View style={styles.iconContainer}>
-          <Feather name={item.icon} size={20} color="#c93c7c" />
+          <Feather name={item.icon} size={responsiveDimensions.iconSize.md} color={colors.primary} />
         </View>
         <View style={styles.settingInfo}>
           <Text style={styles.settingLabel}>{item.label}</Text>
@@ -102,12 +105,12 @@ export default function SettingsScreen() {
           <Switch
             value={toggleStates[item.key as keyof typeof toggleStates]}
             onValueChange={() => handleToggle(item.key)}
-            trackColor={{ false: "#e0e0e0", true: "#c93c7c" }}
-            thumbColor="#fff"
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={colors.white}
           />
         )}
         {item.hasArrow && (
-          <Feather name="chevron-right" size={20} color="#888" />
+          <Feather name="chevron-right" size={responsiveDimensions.iconSize.md} color={colors.textTertiary} />
         )}
       </View>
     </TouchableOpacity>
@@ -146,14 +149,14 @@ export default function SettingsScreen() {
               </View>
             </View>
             <TouchableOpacity style={styles.editButton}>
-              <Feather name="edit-2" size={16} color="#c93c7c" />
+              <Feather name="edit-2" size={responsiveDimensions.iconSize.sm} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
           {SETTINGS_SECTIONS.map(renderSettingSection)}
 
           <TouchableOpacity style={styles.logoutButton}>
-            <Feather name="log-out" size={20} color="#F44336" />
+            <Feather name="log-out" size={responsiveDimensions.iconSize.md} color={colors.error} />
             <Text style={styles.logoutText}>Sign Out</Text>
           </TouchableOpacity>
 
@@ -176,94 +179,101 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
+    marginLeft: responsiveDimensions.avatarSize.md,
+    fontSize: typography.fontSize.heading2,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.white,
   },
   placeholder: {
-    width: 40,
+    width: responsiveDimensions.avatarSize.md,
   },
   content: {
     flex: 1,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
-    paddingTop: 20,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: borderRadius.xxl,
+    borderTopRightRadius: borderRadius.xxl,
+    paddingTop: spacing.md,
   },
   settingsList: {
     flex: 1,
   },
   profileCard: {
-    backgroundColor: "#f8f9fa",
-    borderRadius: 16,
-    padding: 20,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.md,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    ...getShadow('card'),
   },
   profileInfo: {
     flexDirection: "row",
     alignItems: "center",
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#c93c7c",
+    width: responsiveDimensions.avatarSize.lg,
+    height: responsiveDimensions.avatarSize.lg,
+    borderRadius: responsiveDimensions.avatarSize.lg / 2,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: spacing.xs,
   },
   avatarText: {
-    fontSize: 24,
-    color: "#fff",
+    fontSize: typography.fontSize.heading2,
+    color: colors.white,
   },
   profileName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#222",
-    marginBottom: 2,
+    fontSize: typography.fontSize.heading3,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs / 2,
   },
   profileEmail: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: typography.fontSize.md,
+    color: colors.textSecondary,
+    fontFamily: typography.fontFamily.regular,
   },
   editButton: {
-    padding: 8,
+    padding: spacing.sm,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: spacing.xl,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#888",
-    marginBottom: 12,
-    marginHorizontal: 20,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.textTertiary,
+    marginBottom: spacing.xs,
+    marginHorizontal: spacing.md,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   sectionContent: {
-    backgroundColor: "#fff",
-    marginHorizontal: 20,
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    marginHorizontal: spacing.md,
+    borderRadius: borderRadius.lg,
     overflow: "hidden",
+    ...getShadow('card'),
   },
   settingItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: colors.border,
   },
   settingLeft: {
     flexDirection: "row",
@@ -271,55 +281,60 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#f9d6db",
+    width: responsiveDimensions.avatarSize.md,
+    height: responsiveDimensions.avatarSize.md,
+    borderRadius: responsiveDimensions.avatarSize.md / 2,
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: spacing.xs,
   },
   settingInfo: {
     flex: 1,
   },
   settingLabel: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#222",
-    marginBottom: 2,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs / 2,
   },
   settingValue: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: typography.fontSize.md,
+    color: colors.textSecondary,
+    fontFamily: typography.fontFamily.regular,
   },
   settingRight: {
-    marginLeft: 12,
+    marginLeft: spacing.xs,
   },
   logoutButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
-    marginHorizontal: 20,
-    borderRadius: 16,
-    paddingVertical: 16,
-    marginTop: 20,
+    backgroundColor: colors.surface,
+    marginHorizontal: spacing.md,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    marginTop: spacing.md,
     borderWidth: 1,
-    borderColor: "#F44336",
+    borderColor: colors.error,
+    ...getShadow('card'),
   },
   logoutText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#F44336",
-    marginLeft: 8,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    fontFamily: typography.fontFamily.bold,
+    color: colors.error,
+    marginLeft: spacing.sm,
   },
   footer: {
     alignItems: "center",
-    paddingVertical: 20,
-    paddingBottom: 100,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xxl,
   },
   versionText: {
-    fontSize: 14,
-    color: "#888",
+    fontSize: typography.fontSize.md,
+    color: colors.textTertiary,
+    fontFamily: typography.fontFamily.regular,
   },
 });

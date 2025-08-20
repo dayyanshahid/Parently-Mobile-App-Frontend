@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-
-const { width } = Dimensions.get("window");
+import { scale, spacing, responsiveDimensions, deviceInfo } from "../utils/responsive";
+import { getBlurViewProps, getShadow } from "../utils/platform";
+import { colors, typography, borderRadius } from "../utils/theme";
 
 const INFO_CARDS = [
   { key: "upcoming", label: "Upcoming", count: "03" },
@@ -15,19 +16,41 @@ interface InfoCardsSectionProps {
 }
 
 export default function InfoCardsSection({ onFilterPress }: InfoCardsSectionProps) {
+  const blurViewProps = getBlurViewProps();
+  
+  // Calculate responsive card width
+  const cardWidth = (deviceInfo.width - scale(100)) / 2;
+
   return (
     <View style={styles.infoCardsContainer}>
       {INFO_CARDS.map(({ key, label, count }) => (
-        <View key={key} style={{ width: (width - 100) / 2, borderRadius: 18, overflow: 'hidden', margin: '0.5%', alignSelf: 'center' }}>
-          {/* <BlurView tint="light" style={styles.infoCard} intensity={17}> */}
-          <BlurView {...(Platform.OS === 'android' ? { experimentalBlurMethod: 'dimezisBlurView' } : {})} tint="dark" intensity={15} style={styles.infoCard}> 
+        <View
+          key={key}
+          style={[styles.cardWrapper, { width: cardWidth }]}
+        >
+          {/* Blur background */}
+          <BlurView
+            {...blurViewProps}
+            intensity={8}
+            style={StyleSheet.absoluteFill}
+          />
+
+          {/* Foreground content (sharp text) */}
+          <View style={styles.cardContent}>
             <Text style={styles.infoCount}>{count}</Text>
             <Text style={styles.infoLabel}>{label}</Text>
-          </BlurView>
+          </View>
         </View>
       ))}
+
+      {/* Filter button */}
       <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
-        <Feather name="sliders" size={15} color="black" style={{ transform: [{ rotate: '90deg' }] }} />
+        <Feather
+          name="sliders"
+          size={responsiveDimensions.iconSize.sm}
+          color={colors.textPrimary}
+          style={{ transform: [{ rotate: "90deg" }] }}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -37,32 +60,46 @@ const styles = StyleSheet.create({
   infoCardsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
-    marginInlineEnd: '10%',
+    marginBottom: spacing.md,
+    marginRight: "10%",
     alignItems: "center",
   },
-  infoCard: {
-    backgroundColor: "rgba(111, 111, 111, 0.29)",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+  cardWrapper: {
+    borderRadius: borderRadius.xxl,
+    overflow: "hidden",
+    margin: spacing.xs / 2,
+    alignSelf: "center",
+    borderColor: colors.glassBorder,
+    borderWidth: 1,
+    ...getShadow('card'),
+  },
+  cardContent: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
   infoCount: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 20,
-    marginBottom: 4,
+    color: colors.white,
+    fontWeight: typography.fontWeight.bold,
+    fontSize: typography.fontSize.xl,
+    fontFamily: typography.fontFamily.bold,
+    marginBottom: spacing.xs,
   },
   infoLabel: {
-    color: "#fff",
-    fontSize: 14,
+    color: colors.white,
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.medium,
+    fontFamily: typography.fontFamily.medium,
   },
   filterButton: {
-    backgroundColor: "#fff",
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    backgroundColor: colors.white,
+    width: responsiveDimensions.avatarSize.md,
+    height: responsiveDimensions.avatarSize.md,
+    borderRadius: responsiveDimensions.avatarSize.md / 2,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 10,
+    marginLeft: spacing.sm,
+    ...getShadow('button'),
   },
 });

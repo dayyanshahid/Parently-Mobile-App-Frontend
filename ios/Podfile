@@ -40,6 +40,8 @@ target 'parently' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
+    :fabric_enabled => true,     # enable Fabric
+    :new_arch_enabled => true    # enable TurboModules
   )
 
   post_install do |installer|

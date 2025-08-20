@@ -1,78 +1,175 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Dimensions,
+  FlatList,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
+import dayjs, { Dayjs } from "dayjs";
 
-const CALENDAR_DATES = [
-  { key: "18", day: "Mo" },
-  { key: "19", day: "Tu" },
-  { key: "20", day: "Wed" },
-  { key: "21", day: "Th", isToday: true },
-  { key: "22", day: "Fr" },
-  { key: "23", day: "Sa" },
-  { key: "24", day: "Su" },
-];
+const { width } = Dimensions.get("window");
 
-interface CalendarStripProps {
-  onDateSelect?: (date: string) => void;
-}
+export default function Calendar() {
+  const today = dayjs();
+  const [currentDate, setCurrentDate] = useState<Dayjs>(today);
+  const [selectedDay, setSelectedDay] = useState<Dayjs>(today);
+  const WEEKS_AROUND = 3;
+  const TOTAL_WEEKS = WEEKS_AROUND * 2 + 1;
+  const baseCenter = today.subtract(WEEKS_AROUND, "week");
+  const getWeekCenterByIndex = (index: number) => baseCenter.add(index, "week");
+  const renderWeekDays = (center: Dayjs) =>
+    Array.from({ length: 6 }, (_, i) => center.add(i - 3, "day"));
 
-export default function CalendarStrip({ onDateSelect }: CalendarStripProps) {
-  const renderCalendarDate = ({ key, day, isToday }: any) => (
-    <TouchableOpacity 
-      key={key} 
-      style={[styles.calendarDate, isToday && styles.calendarDateToday]}
-      onPress={() => onDateSelect?.(key)}
-    >
-      <Text style={[styles.calendarDateText, isToday && styles.calendarDateTextToday]}>{key}</Text>
-      <Text style={[styles.calendarDayText, isToday && styles.calendarDayTextToday]}>{day}</Text>
-      {isToday && <View style={styles.calendarDot} />}
-    </TouchableOpacity>
-  );
+  const DAY_WIDTH = width / 7;
+  const listRef = useRef<FlatList<any> | null>(null); // <-- typed ref, null initial
+
+  useEffect(() => {
+    setTimeout(() => {
+      listRef.current?.scrollToIndex({ index: WEEKS_AROUND, animated: false });
+    }, 0);
+  }, []);
+
+  const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const pageIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+    setCurrentDate(getWeekCenterByIndex(pageIndex));
+  };
 
   return (
-    <View style={styles.calendarStrip}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {CALENDAR_DATES.map(renderCalendarDate)}
-      </ScrollView>
+    <View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignSelf:'flex-end' }}>
+        <Text style={{ fontSize: 13, fontWeight: "600",color: "#4d4d4d86" }}>
+          {selectedDay.format(" DD MMM YY")}
+        </Text>
+      </View>
+      <FlatList
+        ref={listRef}
+        horizontal
+        // pagingEnabled
+        decelerationRate="fast"
+        showsHorizontalScrollIndicator={false}
+        data={Array.from({ length: TOTAL_WEEKS }, (_, i) => i)}
+        keyExtractor={(i) => String(i)}
+        initialScrollIndex={WEEKS_AROUND}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        scrollEventThrottle={8}
+        renderItem={({ item: weekIndex }) => {
+          const weekCenter = getWeekCenterByIndex(weekIndex as number);
+          const days = renderWeekDays(weekCenter);
+
+          return (
+            <View style={styles.container}>
+              {days.map((day) => {
+                const isSelected = selectedDay.isSame(day, "day");
+                const isToday = day.isSame(today, "day");
+                const dayContainerStyle = [
+                  styles.dayContainer,
+                  isSelected && styles.selectedDay,
+                  isSelected && { paddingVertical: 12, borderRadius: 14, marginTop: -6 },
+                ];
+
+                const dayNumberStyle = [
+                  styles.dayText,
+                  isSelected && styles.selectedDayText,
+                  isSelected && { fontSize: 20 },
+                ];
+
+                const weekdayStyle = [
+                  styles.weekdayText,
+                  isSelected && styles.selectedDayText,
+                  isSelected && { fontSize: 14, marginTop: 4 },
+                ];
+
+                const dotStyleForToday = [
+                  styles.dot,
+                  { backgroundColor: "#EA479A" },
+                  isToday && { width: 10, height: 10, borderRadius: 5 },
+                ];
+
+                return (
+                  <TouchableOpacity
+                    key={day.format("YYYY-MM-DD")}
+                    onPress={() => setSelectedDay(day)}
+                    activeOpacity={0.8}
+                    style={{ width: DAY_WIDTH }}
+                  >
+                    <View style={dayContainerStyle}>
+                      <Text style={dayNumberStyle}>{day.format("D")}</Text>
+                      <Text style={weekdayStyle}>{day.format("ddd")}</Text>
+                    </View>
+
+                    <View style={styles.dotsRow}>
+                      {isToday ? <View style={dotStyleForToday} /> : <View style={styles.dotHidden} />}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        }}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  calendarStrip: {
-    marginBottom: 20,
+  container: {
+    flexDirection: "row",
+    minHeight: 120,
+    alignItems: "flex-start",
+    paddingTop: 16,
   },
-  calendarDate: {
-    width: 44,
-    height: 72,
-    borderRadius: 16,
-    justifyContent: "center",
+  dayContainer: {
     alignItems: "center",
-    marginRight: 12,
+    justifyContent: "center",
+    paddingVertical: 8,
+    borderRadius: 12,
+    backgroundColor: "#ffffffff",
+    marginHorizontal: 5,
   },
-  calendarDateToday: {
-    backgroundColor: "#f9d6db",
+  selectedDay: {
+    backgroundColor: "#ffe6ecff",
   },
-  calendarDateText: {
-    color: "black",
+  dayText: {
     fontSize: 16,
-    fontWeight: "bold",
+    color: "#333333ff",
+    textAlign: "center",
+    fontWeight: "600",
   },
-  calendarDateTextToday: {
-    color: "#c93c7c",
-  },
-  calendarDayText: {
-    color: "black",
+  weekdayText: {
     fontSize: 12,
-    marginTop: 4,
+    color: "#666666ff",
+    textAlign: "center",
+    marginTop: 2,
   },
-  calendarDayTextToday: {
-    color: "#c93c7c",
+  selectedDayText: {
+    fontWeight: "700",
+    color: "#ff007bff",
+    fontSize: 16,
   },
-  calendarDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#c93c7c",
-    marginTop: 6,
+  dotsRow: {
+    flexDirection: "row",
+    marginTop: 8,
+    justifyContent: "center",
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 6,
+    marginHorizontal: 1,
+  },
+  dotHidden: {
+    width: 8,
+    height: 8,
+    opacity: 0,
   },
 });
