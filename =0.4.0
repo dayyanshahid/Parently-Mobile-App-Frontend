@@ -1,0 +1,14 @@
+yarn add v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+success Saved 1 new dependency.
+info Direct dependencies
+└─ react-native-worklets@0.4.1
+info All dependencies
+└─ react-native-worklets@0.4.1
+$ expo install --fix
+Dependencies are up to date
+Done in 8.01s.
