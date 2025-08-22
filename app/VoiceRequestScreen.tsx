@@ -5,18 +5,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Animated,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Canvas, Circle, Group, Path, Skia } from "@shopify/react-native-skia";
+import { Canvas, Circle, Group, Path, Skia, SweepGradient, vec } from "@shopify/react-native-skia";
 import { Audio } from "expo-av";
+import Animated, { Easing, withTiming, useSharedValue, useAnimatedStyle, withRepeat } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 const orbSize = width * 0.6;
 
 const VoiceRequestScreen: React.FC = () => {
-  const globePulse = useRef(new Animated.Value(1)).current;
+  const globePulse = useSharedValue(1);
+  const gradientRotation = useSharedValue(0);
 
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
@@ -25,21 +26,43 @@ const VoiceRequestScreen: React.FC = () => {
   // --- Globe Pulse Animation ---
   useEffect(() => {
     const loopPulse = () => {
-      Animated.sequence([
-        Animated.timing(globePulse, {
-          toValue: 1.2,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(globePulse, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start(() => loopPulse());
+      globePulse.value = withRepeat(
+        withTiming(1.2, { duration: 500, easing: Easing.ease }),
+        -1,
+        true
+      );
     };
     loopPulse();
   }, [globePulse]);
+
+  // --- Gradient Rotation Animation ---
+  useEffect(() => {
+    const loopRotation = () => {
+      gradientRotation.value = withRepeat(
+        withTiming(1, { duration: 8000, easing: Easing.linear }),
+        -1,
+        false
+      );
+    };
+    loopRotation();
+  }, [gradientRotation]);
+
+  // --- Update gradient speed when recording ---
+  useEffect(() => {
+    if (recording) {
+      gradientRotation.value = withRepeat(
+        withTiming(1, { duration: 2000, easing: Easing.linear }),
+        -1,
+        false
+      );
+    } else {
+      gradientRotation.value = withRepeat(
+        withTiming(1, { duration: 8000, easing: Easing.linear }),
+        -1,
+        false
+      );
+    }
+  }, [recording, gradientRotation]);
 
   // --- Generate Globe Grid Paths ---
   const generateGlobePaths = () => {
@@ -124,14 +147,12 @@ const VoiceRequestScreen: React.FC = () => {
       const status = await rec.getStatusAsync();
       if (status.metering !== undefined) {
         const level = Math.min(Math.max((status.metering + 200) / 160, 0.6), 1.4);
-        Animated.timing(globePulse, {
-          toValue: level,
-          duration: 200, // responsive but smooth
-          useNativeDriver: true,
-        }).start();
+        globePulse.value = withTiming(level, { duration: 200, easing: Easing.ease });
       }
     }, 50);
   };
+
+  const rotation = gradientRotation.value * 360;
 
   return (
     <View style={styles.container}>
@@ -143,19 +164,24 @@ const VoiceRequestScreen: React.FC = () => {
       {/* Center Globe */}
       <View style={styles.centerContainer}>
         <Animated.View
-          style={{
-            position: "absolute",
-            width: width * 0.7,
-            height: width * 0.7,
-            borderRadius: width * 0.35,
-            backgroundColor: "#ff5fa2",
-            transform: [{ scale: globePulse }],
-            opacity: 0.7,
-          }}
+          style={[
+            styles.globe,
+            {
+              transform: [{ scale: globePulse.value }],
+              opacity: 0.7,
+            },
+          ]}
         />
         <Canvas style={{ width: orbSize, height: orbSize }}>
           <Group>
-            <Circle cx={orbSize / 2} cy={orbSize / 2} r={orbSize / 2} color="#0a0c10" />
+            <Circle cx={orbSize / 2} cy={orbSize / 2} r={orbSize / 2}>
+              <SweepGradient
+                c={vec(orbSize / 2, orbSize / 2)}
+                colors={["#ffffff", "#ff5fa2", "#ff5fa2", "#ffffff"]}
+                positions={[0, 0.3, 0.7, 1]}
+                transform={[{ rotate: rotation }]}
+              />
+            </Circle>
             {globePaths.map((p, i) => (
               <Path key={i} path={p} color="#ff5fa2" style="stroke" strokeWidth={1} />
             ))}
@@ -163,7 +189,7 @@ const VoiceRequestScreen: React.FC = () => {
               cx={orbSize / 2}
               cy={orbSize / 2}
               r={orbSize / 2 - 2}
-              color="rgba(255,95,162,0.3)"
+              color="rgba(255, 176, 209, 0.3)"
             />
           </Group>
         </Canvas>
@@ -203,6 +229,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   closeButton: { position: "absolute", top: 50, right: 20, zIndex: 10 },
   centerContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  globe: {
+    position: "absolute",
+    width: width * 0.7,
+    height: width * 0.7,
+    borderRadius: width * 0.35,
+    backgroundColor: "#ffc3dcff",
+  },
   playButton: {
     flexDirection: "row",
     alignItems: "center",

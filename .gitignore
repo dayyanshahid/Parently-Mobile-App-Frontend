@@ -8,7 +8,7 @@ components/
 dist/
 web-build/
 expo-env.d.ts
-
+TODO.md
 # Native
 *.orig.*
 *.jks
