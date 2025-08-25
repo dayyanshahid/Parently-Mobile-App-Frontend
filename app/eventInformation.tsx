@@ -1,9 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Switch } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { spacing, responsiveDimensions } from "../utils/responsive";
-import { getShadow } from "../utils/platform";
-import { colors, typography, borderRadius } from "../utils/theme";
 import { useRouter } from "expo-router";
 import EventMat from "../components/EventMat";
 
@@ -18,7 +15,7 @@ export default function eventInformation() {
         {/* Event Image */}
         <View style={styles.imageWrapper}>
           <Image
-            source={{ uri: "https://i.pravatar.cc/100?img=3" }}
+            source={{ uri: "https://placekitten.com/600/400" }}
             style={styles.eventImage}
           />
           <TouchableOpacity style={styles.heartButton}>
@@ -124,171 +121,64 @@ export default function eventInformation() {
 }
 
 const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#fff" },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: spacing.md,
-    backgroundColor: colors.primary,
+    padding: 16,
+    backgroundColor: "linear-gradient(90deg, #6a11cb, #2575fc)",
   },
-  headerTitle: { 
-    color: colors.white, 
-    fontSize: typography.fontSize.heading3, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold
-  },
-  scroll: { 
-    paddingBottom: spacing.xxl * 2 
-  },
-  imageWrapper: { 
-    position: "relative" 
-  },
-  eventImage: { 
-    width: "100%", 
-    height: 200, 
-    borderRadius: borderRadius.lg,
-    marginTop: spacing.md 
-  },
+  headerTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  scroll: { paddingBottom: 100 },
+  imageWrapper: { position: "relative" },
+  eventImage: { width: "100%", height: 200, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 },
   heartButton: {
-    position: "absolute", 
-    top: spacing.md, 
-    right: spacing.sm,
-    backgroundColor: colors.white, 
-    borderRadius: borderRadius.lg, 
-    padding: spacing.xs,
+    position: "absolute", top: 10, right: 10,
+    backgroundColor: "#fff", borderRadius: 20, padding: 6,
   },
   organiserWrapper: {
     position: "absolute",
-    bottom: -spacing.xl,
+    bottom: -30,
     alignSelf: "center",
     flexDirection: "row",
-    backgroundColor: colors.white,
-    padding: spacing.sm,
-    borderRadius: borderRadius.xl,
-    ...getShadow('card'),
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  organiser: { 
-    alignItems: "center", 
-    marginHorizontal: spacing.sm 
-  },
-  avatar: { 
-    width: responsiveDimensions.avatarSize.md, 
-    height: responsiveDimensions.avatarSize.md, 
-    borderRadius: responsiveDimensions.avatarSize.md / 2, 
-    marginBottom: spacing.xs 
-  },
-  organiserName: { 
-    fontSize: typography.fontSize.sm, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    color: colors.textPrimary
-  },
-  organiserRole: { 
-    fontSize: typography.fontSize.xs, 
-    color: colors.textSecondary,
-    fontFamily: typography.fontFamily.regular
-  },
-  title: {
-    fontSize: typography.fontSize.heading2, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    color: colors.textPrimary
-  },
-  location: { 
-    color: colors.textSecondary,
-    fontSize: typography.fontSize.md,
-    fontFamily: typography.fontFamily.regular
-  },
-  detailRow: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    marginVertical: spacing.sm, 
-    paddingHorizontal: spacing.md 
-  },
-  detailTitle: { 
-    fontSize: typography.fontSize.lg, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    color: colors.textPrimary
-  },
-  detailSubtitle: { 
-    fontSize: typography.fontSize.sm, 
-    color: colors.textSecondary,
-    fontFamily: typography.fontFamily.regular
-  },
+  organiser: { alignItems: "center", marginHorizontal: 10 },
+  avatar: { width: 40, height: 40, borderRadius: 20, marginBottom: 4 },
+  organiserName: { fontSize: 12, fontWeight: "bold" },
+  organiserRole: { fontSize: 11, color: "#666" },
+  title: {fontSize: 20, fontWeight: "bold"},
+  location: { color: "#666"},
+  detailRow: { flexDirection: "row", alignItems: "center", marginVertical: 10, paddingHorizontal: 20 },
+  detailTitle: { fontSize: 16, fontWeight: "bold" },
+  detailSubtitle: { fontSize: 13, color: "#666" },
   guestsRow: {
-    flexDirection: "row", 
-    alignItems: "center", 
-    paddingHorizontal: spacing.md, 
-    marginTop: spacing.md,
+    flexDirection: "row", alignItems: "center", paddingHorizontal: 20, marginTop: 20,
   },
-  guestAvatar: { 
-    width: responsiveDimensions.avatarSize.md, 
-    height: responsiveDimensions.avatarSize.md, 
-    borderRadius: responsiveDimensions.avatarSize.md / 2, 
-    marginRight: -spacing.sm, 
-    borderWidth: 2, 
-    borderColor: colors.white 
-  },
-  invitedText: { 
-    marginLeft: spacing.xs, 
-    fontSize: typography.fontSize.md, 
-    color: colors.primary, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold
-  },
+  guestAvatar: { width: 40, height: 40, borderRadius: 20, marginRight: -10, borderWidth: 2, borderColor: "#fff" },
+  invitedText: { marginLeft: 12, fontSize: 14, color: "#e91e63", fontWeight: "bold" },
   viewButton: {
-    marginLeft: "auto", 
-    backgroundColor: colors.primary, 
-    borderRadius: borderRadius.lg, 
-    paddingHorizontal: spacing.md, 
-    paddingVertical: spacing.xs,
+    marginLeft: "auto", backgroundColor: "#e91e63", borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6,
   },
-  viewButtonText: { 
-    color: colors.white, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    fontSize: typography.fontSize.sm
-  },
+  viewButtonText: { color: "#fff", fontWeight: "bold" },
   presentCard: {
-    backgroundColor: colors.white, 
-    margin: spacing.md, 
-    padding: spacing.md, 
-    borderRadius: borderRadius.lg,
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center",
-    ...getShadow('card'),
+    backgroundColor: "#fff", margin: 20, padding: 16, borderRadius: 16,
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+    shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
   },
-  presentIcon: { 
-    fontSize: typography.fontSize.heading2 
-  },
-  presentTitle: { 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    fontSize: typography.fontSize.lg,
-    color: colors.textPrimary
-  },
-  presentSubtitle: { 
-    color: colors.textSecondary, 
-    fontSize: typography.fontSize.sm,
-    fontFamily: typography.fontFamily.regular
-  },
+  presentIcon: { fontSize: 24 },
+  presentTitle: { fontWeight: "bold" },
+  presentSubtitle: { color: "#666", fontSize: 12 },
   inviteButton: {
-    position: "absolute", 
-    bottom: spacing.md, 
-    left: spacing.md, 
-    right: spacing.md,
-    backgroundColor: colors.primary, 
-    paddingVertical: spacing.md, 
-    borderRadius: borderRadius.xl, 
-    alignItems: "center",
-    ...getShadow('button'),
+    position: "absolute", bottom: 20, left: 20, right: 20,
+    backgroundColor: "#e91e63", paddingVertical: 14, borderRadius: 30, alignItems: "center",
   },
-  inviteButtonText: { 
-    color: colors.white, 
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold, 
-    fontSize: typography.fontSize.lg 
-  },
+  inviteButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
 });

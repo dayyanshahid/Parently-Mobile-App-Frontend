@@ -34,3 +34,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# pkg mgr lock files
+yarn.lock
+package.lock

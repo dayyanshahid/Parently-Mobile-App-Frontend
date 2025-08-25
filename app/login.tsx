@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet,Image, TouchableOpacity } from "react-native";
 import GradientBackground from "../components/GradientBackground";
 import StyledTextInput from "../components/StyledTextInput";
 import StyledButton from "../components/StyledButton";
@@ -7,10 +7,7 @@ import SocialButton from "../components/SocialButton";
 import { MaterialCommunityIcons, FontAwesome, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Loader from "../components/Loader";
-import { spacing, responsiveDimensions } from "../utils/responsive";
-import { getShadow } from "../utils/platform";
-import { colors, typography, borderRadius } from "../utils/theme";
-import { getToken, loginUser } from "../components/api";
+
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -51,20 +48,14 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    try {
-      const data = await loginUser(email, password);
-      console.log("Login success:", data);
-
+    setTimeout(() => {
       setLoading(false);
       router.push({
         pathname: "/introScreen1",
         params: { fromSignIn: "true" },
       });
-    } catch (err) {
-      setLoading(false);
-      alert(err.message || "Login failed. Please try again.");
-    }
-  };
+    }, 1800);
+  }; 
 
   const handleForgotpassword = () => {
     setLoading(true);
@@ -76,7 +67,7 @@ export default function LoginScreen() {
 
   return (
     <GradientBackground showLogo>
-      <Loader loading={showLoader} />
+      {/* <Loader loading={showLoader} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.title}>Sign in</Text>
@@ -84,13 +75,7 @@ export default function LoginScreen() {
             placeholder="Enter email or phone no."
             value={email}
             onChangeText={setEmail}
-            leftIcon={
-              <MaterialCommunityIcons 
-                name="email-outline" 
-                size={responsiveDimensions.iconSize.md} 
-                color={colors.textTertiary} 
-              />
-            }
+            leftIcon={<MaterialCommunityIcons name="email-outline" size={22} color="#888" />}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -98,20 +83,10 @@ export default function LoginScreen() {
             placeholder="Your password"
             value={password}
             onChangeText={setPassword}
-            leftIcon={
-              <Feather 
-                name="lock" 
-                size={responsiveDimensions.iconSize.md} 
-                color={colors.textTertiary} 
-              />
-            }
+            leftIcon={<Feather name="lock" size={22} color="#888" />}
             rightIcon={
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather 
-                  name={showPassword ? "eye-off" : "eye"} 
-                  size={responsiveDimensions.iconSize.md} 
-                  color={colors.textTertiary} 
-                />
+                <Feather name={showPassword ? "eye-off" : "eye"} size={22} color="#888" />
               </TouchableOpacity>
             }
             secureTextEntry={!showPassword}
@@ -125,22 +100,12 @@ export default function LoginScreen() {
           <Text style={styles.or}>OR</Text>
           <SocialButton
               title="Login with Google"
-              icon={
-                <Image 
-                  source={require("../assets/Google.png")} 
-                  style={styles.socialIcon} 
-                />
-              }
+              icon={<Image source={require("../assets/Google.png")} style={{ width: 22, height: 22 }} />}
               onPress={() => {}}
             />
           <SocialButton
               title="Login with Outlook"
-              icon={
-                <Image 
-                  source={require("../assets/Outlook.png")} 
-                  style={styles.socialIcon} 
-                />
-              }
+              icon={<Image source={require("../assets/Outlook.png")} style={{ width: 22, height: 22 }} />}
               onPress={() => {}}
             />
           <View style={styles.signupRow}>
@@ -153,9 +118,9 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.contactBtn}>
           <Text style={styles.contactText}>Contact Us</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.contactBtn} onPress={() => router.push("/index")}>
+        {/* <TouchableOpacity style={styles.contactBtn} onPress={() => router.push("/index")}>
           <Text style={styles.contactText}>TEST SCREEN</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </GradientBackground>
   );
@@ -164,82 +129,74 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
+    // justifyContent: "center",
     alignItems: "center",
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
+    paddingVertical: 24,
   },
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xxxl,
-    padding: spacing.xl,
+    backgroundColor: "#fff",
+    borderRadius: 36,
+    padding: 28,
     width: "90%",
     maxWidth: 400,
     alignItems: "stretch",
-    marginBottom: spacing.xl,
-    ...getShadow('card'),
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+    marginBottom: 24,
   },
   title: {
-    fontSize: typography.fontSize.heading2,
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
-    color: colors.textPrimary,
-    marginBottom: spacing.xl,
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#222",
+    marginBottom: 24,
   },
   forgotBtn: {
     alignSelf: "flex-end",
-    marginBottom: spacing.xs,
+    marginBottom: 12,
   },
   forgotText: {
-    color: colors.primary,
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.medium,
-    fontFamily: typography.fontFamily.medium,
+    color: "#e24fa3",
+    fontSize: 14,
+    fontWeight: "500",
   },
   arrow: {
-    color: colors.white,
-    fontSize: typography.fontSize.xl,
-    marginLeft: spacing.sm,
-    fontWeight: typography.fontWeight.bold,
+    color: "#fff",
+    fontSize: 22,
+    marginLeft: 8,
+    fontWeight: "bold",
   },
   or: {
     textAlign: "center",
-    color: colors.textSecondary,
-    fontSize: typography.fontSize.lg,
-    marginVertical: spacing.xs,
-    fontWeight: typography.fontWeight.medium,
-    fontFamily: typography.fontFamily.medium,
-  },
-  socialIcon: {
-    width: responsiveDimensions.iconSize.lg,
-    height: responsiveDimensions.iconSize.lg,
+    color: "#888",
+    fontSize: 16,
+    marginVertical: 12,
+    fontWeight: "500",
   },
   signupRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: spacing.sm,
+    marginTop: 8,
     marginBottom: 0,
   },
   signupText: {
-    color: colors.textSecondary,
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.regular,
-    fontFamily: typography.fontFamily.regular,
+    color: "#888",
+    fontSize: 15,
   },
   signupLink: {
-    color: colors.secondary,
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.bold,
-    fontFamily: typography.fontFamily.bold,
+    color: "#2a6cf6",
+    fontSize: 15,
+    fontWeight: "bold",
   },
   contactBtn: {
     alignSelf: "center",
-    marginTop: spacing.xs,
+    marginTop: 12,
   },
   contactText: {
-    color: colors.secondary,
-    fontSize: typography.fontSize.md,
+    color: "#2a6cf6",
+    fontSize: 15,
     textDecorationLine: "underline",
-    fontWeight: typography.fontWeight.medium,
-    fontFamily: typography.fontFamily.medium,
+    fontWeight: "500",
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import EventMat from "../components/EventMat";
 
+
 interface Message {
   id: string;
   text: string;
@@ -22,7 +23,7 @@ interface Message {
   avatar?: string;
 }
 
-const initialMessages: Message[] = [
+const messages: Message[] = [
   {
     id: "1",
     text: "🎉 Hey everyone! I'm organising a birthday party for my son, Harry Looker! We're planning something fun this weekend with games, cake, and lots of excitement. Would love for the kids to join and celebrate with us! 🎂🎈",
@@ -52,39 +53,8 @@ const initialMessages: Message[] = [
   },
 ];
 
-
 export default function ChatScreen() {
   const [input, setInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<Message[]>(initialMessages);
-  const flatListRef = useRef<FlatList>(null);
-
-
-  
-const handleSend = () => {
-  if (!input.trim()) return;
-
-  const now = new Date();
-  const formattedTime = now.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const newMessage: Message = {
-    id: Date.now().toString(),
-    text: input,
-    time: formattedTime, // <-- real time
-    sender: "me",
-  };
-
-  setChatMessages([...chatMessages, newMessage]);
-  setInput("");
-
-  // scroll to bottom after sending
-  setTimeout(() => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  }, 100);
-};
-
 
   const renderMessage = ({ item }: { item: Message }) => {
     const isMe = item.sender === "me";
@@ -109,44 +79,37 @@ const handleSend = () => {
     );
   };
 
-  
   return (
     <EventMat title="Group Chat">
-      <KeyboardAvoidingView
-        style={styles.container}
+      <KeyboardAvoidingView 
+        style={styles.container} 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 140}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 140} // adjust depending on header height
       >
-        {/* Chat list */}
-        <FlatList
-          ref={flatListRef}
-          data={chatMessages}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, paddingTop: 26 }}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
-        />
+      {/* Chat list */}
+      <FlatList
+        data={messages}
+        renderItem={renderMessage}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16, paddingTop: 26 }}
+      />
 
-        {/* Input bar */}
-        <View style={styles.inputBar}>
-          <TouchableOpacity>
-            <Ionicons name="happy-outline" size={26} color="#555" />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            value={input}
-            onChangeText={setInput}
-            placeholder="Hi! How do you?"
-            placeholderTextColor="#888"
-            onSubmitEditing={handleSend} // send on Enter
-            returnKeyType="send"
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Ionicons name="send" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
+      {/* Input bar */}
+      <View style={styles.inputBar}>
+        <TouchableOpacity>
+          <Ionicons name="happy-outline" size={26} color="#555" />
+        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          value={input}
+          onChangeText={setInput}
+          placeholder="Write something..."
+          placeholderTextColor="#888"
+        />
+        <TouchableOpacity style={styles.sendButton}>
+          <Ionicons name="send" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
       </KeyboardAvoidingView>
     </EventMat>
   );

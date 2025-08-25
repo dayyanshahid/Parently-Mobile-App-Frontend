@@ -68,7 +68,7 @@ export default function ChangePassword() {
 
   return (
     <GradientBackground showLogo showBackButton onPress={() => router.back()}>
-      <Loader loading={showLoader} />
+      {/* <Loader loading={showLoader} /> */}
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"

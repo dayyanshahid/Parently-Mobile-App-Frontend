@@ -3,7 +3,5 @@ module.exports = {
   plugins: [
     // 'react-native-worklets/plugin',
     'react-native-iconify/plugin',
-    'react-native-reanimated/plugin'
-
   ],
 };

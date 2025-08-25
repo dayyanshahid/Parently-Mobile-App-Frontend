@@ -41,7 +41,7 @@ export default function PasswordResetScreen() {
 
   return (
     <GradientBackground showLogo showBackButton onPress={() => router.back()}>
-      <Loader loading={showLoader} />
+      {/* <Loader loading={showLoader} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.title}>Reset Password</Text>
