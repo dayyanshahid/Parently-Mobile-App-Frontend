@@ -38,7 +38,7 @@ export default function LoginScreen() {
     const checkToken = async () => {
       const token = await getToken();
       if (token) {
-        router.push("/homescreen");
+        router.push("/introScreen1");
       }
     };
     checkToken();
@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
       setLoading(false);
       router.push({
-        pathname: "/verificationscreen",
+        pathname: "/introScreen1",
         params: { fromSignIn: "true" },
       });
     } catch (err) {
